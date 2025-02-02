@@ -1,8 +1,18 @@
 import products from './products.js';
 
-// Display Products on Home Page
+// Get Elements
 const productList = document.getElementById("product-list");
+const cartBtn = document.getElementById("cart-btn");
+const cartItemsContainer = document.getElementById("cart-items");
+const cartTotal = document.getElementById("cart-total");
 
+// Cart Panel style 
+const cartPanel = document.getElementById("cart-panel");
+const closeCartBtn = document.getElementById("close-cart");
+const cartOverlay = document.getElementById("cart-overlay");
+
+
+// Display Products on Home Page
 if (productList) {
     products.forEach(product => {
         let productCard = document.createElement("div");
@@ -35,76 +45,62 @@ window.addToCart = function (id) {
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
-    updateCartCount();
+    updateCartUI();
+    openCart(); // Open the cart when adding an item
 };
 
-// Function to Update Cart Count
-function updateCartCount() {
+// Function to Update Cart UI
+function updateCartUI() {
     let cart = getCart();
-    document.getElementById("cart-count").innerText = cart.reduce((total, item) => total + item.quantity, 0);
-}
+    cartItemsContainer.innerHTML = "";
+    let total = 0;
 
-// Function to Display Cart Items
-const cartItemsContainer = document.getElementById("cart-items");
-
-if (cartItemsContainer) {
-    let cart = getCart();
-    
     if (cart.length === 0) {
         cartItemsContainer.innerHTML = "<p>Cart is empty</p>";
     } else {
         cart.forEach(item => {
+            console.log(item)
+            total += item.price * item.quantity;
             let cartItem = document.createElement("div");
             cartItem.classList.add("cart-item");
             cartItem.innerHTML = `
-                <img src="${item.image}" alt="${item.name}">
-                <h3>${item.name}</h3>
-                <p>$${item.price}</p>
-                <p>Quantity: <input type="number" min="1" value="${item.quantity}" onchange="updateQuantity(${item.id}, this.value)"></p>
+                <img width="100" src="${item.image}" />
+                <h4>${item.name}</h4>
+                <p>$${item.price} x ${item.quantity}</p>
                 <button onclick="removeFromCart(${item.id})">Remove</button>
             `;
             cartItemsContainer.appendChild(cartItem);
         });
     }
 
-    updateCartTotal();
+    cartTotal.innerText = total.toFixed(2);
+    document.getElementById("cart-count").innerText = cart.reduce((total, item) => total + item.quantity, 0);
 }
-
-// Function to Update Quantity
-window.updateQuantity = function (id, quantity) {
-    let cart = getCart();
-    let item = cart.find(product => product.id === id);
-    if (item) {
-        item.quantity = parseInt(quantity);
-    }
-    localStorage.setItem("cart", JSON.stringify(cart));
-    updateCartTotal();
-};
 
 // Function to Remove Item from Cart
 window.removeFromCart = function (id) {
     let cart = getCart();
     cart = cart.filter(product => product.id !== id);
     localStorage.setItem("cart", JSON.stringify(cart));
-    location.reload();
+    updateCartUI();
 };
 
-// Function to Calculate Total Price
-function updateCartTotal() {
-    let cart = getCart();
-    let total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    document.getElementById("cart-total").innerText = total.toFixed(2);
+// Function to Open Cart
+function openCart() {
+    cartPanel.classList.add("active");
+    cartOverlay.classList.add("active");
 }
 
-// Checkout Button
-const checkoutBtn = document.getElementById("checkout-btn");
-if (checkoutBtn) {
-    checkoutBtn.addEventListener("click", function () {
-        alert("Checkout successful!");
-        localStorage.removeItem("cart");
-        location.reload();
-    });
+// Function to Close Cart
+function closeCart() {
+    cartPanel.classList.remove("active");
+    cartOverlay.classList.remove("active");
 }
 
-// Update cart count on page load
-updateCartCount();
+// Event Listeners
+cartBtn.addEventListener("click", openCart);
+closeCartBtn.addEventListener("click", closeCart);
+cartOverlay.addEventListener("click", closeCart);
+
+// Load Cart on Page Load
+updateCartUI();

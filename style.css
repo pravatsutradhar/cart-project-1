@@ -1,30 +1,15 @@
 body {
     font-family: Arial, sans-serif;
     padding: 20px;
+    position: relative;
 }
 
+/* Header */
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-}
-
-.product-container, .cart-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.product, .cart-item {
-    border: 1px solid #ddd;
-    padding: 10px;
-    width: 200px;
-}
-
-.product img, .cart-item img {
-    width: 100%;
-    height: auto;
 }
 
 button {
@@ -33,4 +18,72 @@ button {
     background-color: blue;
     color: white;
     border: none;
+}
+
+/* Product Grid */
+.product-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.product {
+    border: 1px solid #ddd;
+    padding: 10px;
+    width: 200px;
+}
+
+.product img {
+    width: 100%;
+    height: auto;
+}
+
+/* Side Cart Panel */
+.cart-panel {
+    position: fixed;
+    top: 0;
+    right: -350px;
+    width: 300px;
+    height: 100%;
+    background: white;
+    box-shadow: -4px 0px 10px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s ease-in-out;
+    padding: 20px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.cart-panel.active {
+    right: 0;
+}
+
+/* Cart Overlay */
+.cart-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 999;
+}
+
+.cart-overlay.active {
+    display: block;
+}
+
+/* Cart Header */
+.cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-header button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: red;
 }
